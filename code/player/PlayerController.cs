@@ -12,7 +12,7 @@ namespace GeneralGame;
 [Title( "Player Controller" )]
 public class PlayerController : Component, Component.ITriggerListener, IHealthComponent
 {
-	[Property] public Vector3 Gravity { get; set; } = new ( 0f, 0f, 800f );
+	[Property] public Vector3 Gravity { get; set; } = new( 0f, 0f, 800f );
 
 	[Property] public CharacterController CharacterController { get; private set; }
 	[Property] public SkinnedModelRenderer ModelRenderer { get; private set; }
@@ -20,7 +20,7 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 	[Property] public List<CitizenAnimationHelper> Animators { get; private set; } = new();
 	public RealTimeSince LastHitmarkerTime { get; private set; }
 	public Vector3 WishVelocity { get; private set; }
-	
+
 	[Property] private CitizenAnimationHelper ShadowAnimator { get; set; }
 	[Property] public WeaponContainer Weapons { get; set; }
 	[Property] public CameraComponent PlyCamera { get; set; }
@@ -57,10 +57,10 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 	public void ApplyRecoil( Angles recoil )
 	{
 		if ( IsProxy ) return;
-		
+
 		Recoil += recoil;
 	}
-	
+
 	public void DoHitMarker( bool isHeadshot )
 	{
 		Sound.Play( isHeadshot ? "hitmarker.headshot" : "hitmarker.hit" );
@@ -88,19 +88,19 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 
 		Weapons.Clear();
 		Weapons.GiveDefault();
-		
+
 		Ragdoll.Unragdoll();
 		MoveToSpawnPoint();
 		LifeState = LifeState.Alive;
 		Health = MaxHealth;
 	}
-	
+
 	[Broadcast]
 	public void TakeDamage( DamageType type, float damage, Vector3 position, Vector3 force, Guid attackerId )
 	{
 		if ( LifeState == LifeState.Dead )
 			return;
-		
+
 		if ( type == DamageType.Bullet )
 		{
 			var p = new SceneParticles( Scene.SceneWorld, "particles/impact.flesh.bloodpuff.vpcf" );
@@ -113,13 +113,13 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 				Sound.Play( HurtSound, Transform.Position );
 			}
 		}
-		
+
 		if ( IsProxy )
 			return;
 
 		TimeSinceDamaged = 0f;
 		Health = MathF.Max( Health - damage, 0f );
-		
+
 		if ( Health <= 0f )
 		{
 			LifeState = LifeState.Dead;
@@ -132,7 +132,7 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 	{
 		if ( !IsCrouching ) return true;
 		if ( LastUngroundedTime < 0.2f ) return false;
-		
+
 		var tr = CharacterController.TraceDirection( Vector3.Up * DuckHeight );
 		return !tr.Hit;
 	}
@@ -141,31 +141,31 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 	{
 		if ( attacker.IsValid() )
 		{
-				var chat = Scene.GetAllComponents<Chat>().FirstOrDefault();
+			var chat = Scene.GetAllComponents<Chat>().FirstOrDefault();
 
-				if ( chat.IsValid() )
-					chat.AddTextLocal( "💀️", $"{this.Network.OwnerConnection.DisplayName} has killed {Network.OwnerConnection.DisplayName}" );
-				
-				if ( !this.IsProxy )
-				{
-					// We killed this player.
-					this.Kills++;
-				}
+			if ( chat.IsValid() )
+				chat.AddTextLocal( "💀️", $"{this.Network.OwnerConnection.DisplayName} has killed {attacker.Network.OwnerConnection.DisplayName}" );
+
+			if ( !this.IsProxy )
+			{
+				// We killed this player.
+				this.Kills++;
+			}
 		}
-		
+
 		if ( IsProxy )
 			return;
 
 		RespawnAsync( 3f );
-		
+
 		Deaths++;
 	}
-	
+
 	protected override void OnAwake()
 	{
 		base.OnAwake();
 
-		
+
 		//ModelRenderer = Components.GetInDescendantsOrSelf<SkinnedModelRenderer>();
 
 		/*CharacterController = Components.GetInDescendantsOrSelf<CharacterController>();
@@ -177,7 +177,7 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 		{
 			CharacterController.Height = StandHeight;
 		}
-		
+
 		if ( IsProxy )
 			return;
 
@@ -193,7 +193,7 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 		{
 			Respawn();
 		}
-			
+
 		base.OnStart();
 	}
 
@@ -208,14 +208,14 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 		var shadowRenderer = ShadowAnimator.Components.Get<SkinnedModelRenderer>( true );
 		var hasViewModel = deployedWeapon.IsValid() && deployedWeapon.HasViewModel;
 		var clothing = ModelRenderer.Components.GetAll<ClothingComponent>( FindMode.EverythingInSelfAndDescendants );
-		
+
 		if ( hasViewModel )
 		{
 			shadowRenderer.Enabled = false;
-			
+
 			ModelRenderer.Enabled = Ragdoll.IsRagdolled;
 			ModelRenderer.RenderType = Sandbox.ModelRenderer.ShadowRenderType.On;
-			
+
 			foreach ( var c in clothing )
 			{
 				c.ModelRenderer.Enabled = Ragdoll.IsRagdolled;
@@ -224,7 +224,7 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 
 			return;
 		}
-			
+
 		ModelRenderer.SetBodyGroup( "head", IsProxy ? 0 : 1 );
 		ModelRenderer.Enabled = true;
 
@@ -261,7 +261,7 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 			return;
 
 		UpdateModelVisibility();
-		
+
 		if ( IsProxy )
 			return;
 
@@ -275,7 +275,7 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 			return;
 		}
 
-		
+
 		var idealEyePos = Eye.Transform.Position;
 		var headPosition = Transform.Position + Vector3.Up * CharacterController.Height;
 		var headTrace = Scene.Trace.Ray( Transform.Position, headPosition )
@@ -285,7 +285,7 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 			.Run();
 
 		headPosition = headTrace.EndPosition - headTrace.Direction * 2f;
-	
+
 		var trace = Scene.Trace.Ray( headPosition, idealEyePos )
 			.UsePhysicsWorld()
 			.IgnoreGameObjectHierarchy( GameObject )
@@ -300,37 +300,37 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 			PlyCamera.Transform.Position = Head.Transform.Position;
 		else
 			PlyCamera.Transform.Position = trace.Hit ? trace.EndPosition : idealEyePos;
-		
+
 		if ( SicknessMode )
 			PlyCamera.Transform.Rotation = Rotation.LookAt( Eye.Transform.Rotation.Left ) * Rotation.FromPitch( -10f );
 		else
 			PlyCamera.Transform.Rotation = EyeAngles.ToRotation() * Rotation.FromPitch( -10f );
 
 
-		if ( IsCrouching && hasViewModel ) 
+		if ( IsCrouching && hasViewModel )
 		{
 			PlyCamera.Transform.Position = PlyCamera.Transform.Position + SieatOffset;
 			//Scene.Camera.Transform.Position = SieatOffset;
-		} 
+		}
 	}
 
 	protected override void OnUpdate()
 	{
 		if ( Ragdoll.IsRagdolled || LifeState == LifeState.Dead )
 			return;
-		
+
 		if ( !IsProxy )
 		{
 			var angles = EyeAngles.Normal;
 			angles += Input.AnalogLook * 0.5f;
 			angles += Recoil * Time.Delta;
 			angles.pitch = angles.pitch.Clamp( -60f, 80f );
-			
+
 			EyeAngles = angles.WithRoll( 0f );
 			IsRunning = Input.Down( "Run" ) && !IsAiming;
 			Recoil = Recoil.LerpTo( Angles.Zero, Time.Delta * 8f );
 		}
-		
+
 		var weapon = Weapons.Deployed;
 
 		foreach ( var animator in Animators )
@@ -342,7 +342,7 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 			animator.FootShuffle = 0f;
 			animator.DuckLevel = IsCrouching ? 1f : 0f;
 			animator.WithLook( EyeAngles.Forward );
-			animator.MoveStyle = ( IsRunning && !IsCrouching ) ? CitizenAnimationHelper.MoveStyles.Run : CitizenAnimationHelper.MoveStyles.Walk;
+			animator.MoveStyle = (IsRunning && !IsCrouching) ? CitizenAnimationHelper.MoveStyles.Run : CitizenAnimationHelper.MoveStyles.Walk;
 		}
 	}
 
@@ -352,10 +352,10 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 
 		if ( WantsToCrouch == IsCrouching )
 			return;
-		
+
 		if ( WantsToCrouch )
 		{
-			
+
 			CharacterController.Height = DuckHeight;
 			IsCrouching = true;
 		}
@@ -367,7 +367,7 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 			CharacterController.Height = StandHeight;
 			IsCrouching = false;
 		}
-		
+
 	}
 
 	protected virtual void DoMovementInput()
@@ -381,14 +381,14 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 		}
 
 		MoveSpeed = CharacterController.Velocity.WithZ( 0 ).Length;
-	
+
 
 		if ( CharacterController.IsOnGround )
 		{
 			CharacterController.Velocity = CharacterController.Velocity.WithZ( 0f );
 			CharacterController.Accelerate( WishVelocity );
 			CharacterController.ApplyFriction( 4.0f );
-			
+
 		}
 		else
 		{
@@ -396,7 +396,7 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 			CharacterController.Accelerate( WishVelocity.ClampLength( 50f ) );
 			CharacterController.ApplyFriction( 0.1f );
 		}
-		
+
 		CharacterController.Move();
 
 		if ( !CharacterController.IsOnGround )
@@ -486,29 +486,29 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 			IsAiming = false;
 		}
 
-		
 
-		
+
+
 
 	}
 
 
 	void ITriggerListener.OnTriggerEnter( Collider other )
 	{
-		
-		
+
+
 	}
 
 	void ITriggerListener.OnTriggerExit( Collider other )
 	{
-		
+
 	}
-	
+
 	private void MoveToSpawnPoint()
 	{
 		if ( IsProxy )
 			return;
-		
+
 		var spawnpoints = Scene.GetAllComponents<SpawnPoint>();
 		var randomSpawnpoint = Game.Random.FromList( spawnpoints.ToList() );
 
@@ -527,7 +527,7 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 		if ( !WishVelocity.IsNearZeroLength )
 			WishVelocity = WishVelocity.Normal;
 
-		
+
 		if ( IsCrouching )
 			WishVelocity *= 64f;
 		else if ( IsRunning )
@@ -543,9 +543,9 @@ public class PlayerController : Component, Component.ITriggerListener, IHealthCo
 		var attacker = Scene.Directory.FindByGuid( attackerId );
 		OnKilled( attacker );
 	}
-	
 
-	
+
+
 	[Broadcast]
 	private void SendJumpMessage()
 	{

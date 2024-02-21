@@ -33,9 +33,9 @@ public abstract class WeaponComponent : Component
 	[Property] public Rotation runRotation { get; set; }
 	[Sync] public bool IsReloading { get; set; }
 	[Sync] public int AmmoInClip { get; set; }
-	
+
 	public bool HasViewModel => ViewModel.IsValid();
-	
+
 	private SkinnedModelRenderer ModelRenderer { get; set; }
 	private SoundSequence ReloadSound { get; set; }
 	private ViewModel ViewModel { get; set; }
@@ -62,7 +62,7 @@ public abstract class WeaponComponent : Component
 			IsDeployed = false;
 		}
 	}
-	
+
 	public virtual bool DoPrimaryAttack()
 	{
 		if ( !NextAttackTime ) return false;
@@ -74,16 +74,16 @@ public abstract class WeaponComponent : Component
 			NextAttackTime = 1f / FireRate;
 			return false;
 		}
-		
+
 		var player = Components.GetInAncestors<PlayerController>();
 		if ( player.MoveSpeed > 150f ) return false;
 		player.ApplyRecoil( Recoil );
-		
+
 		var attachment = EffectRenderer.GetAttachment( "muzzle" );
 		var startPos = player.PlyCamera.Transform.Position;
 		var direction = player.PlyCamera.Transform.Rotation.Forward;
 		direction += Vector3.Random * Spread;
-		
+
 		var endPos = startPos + direction * 10000f;
 		var trace = Scene.Trace.Ray( startPos, endPos )
 			.IgnoreGameObjectHierarchy( GameObject.Root )
@@ -96,7 +96,7 @@ public abstract class WeaponComponent : Component
 
 		SendAttackMessage( origin, trace.EndPosition, trace.Distance );
 		IHealthComponent damageable = null;
-		
+
 		if ( trace.Component.IsValid() )
 			damageable = trace.Component.Components.GetInAncestorsOrSelf<IHealthComponent>();
 
@@ -111,20 +111,20 @@ public abstract class WeaponComponent : Component
 			{
 				player.DoHitMarker( false );
 			}*/
-			
+
 			damageable.TakeDamage( DamageType.Bullet, damage, trace.EndPosition, trace.Direction * DamageForce, GameObject.Id );
 		}
 		else if ( trace.Hit )
 		{
 			SendImpactMessage( trace.EndPosition, trace.Normal );
 		}
-		
+
 		NextAttackTime = 1f / FireRate;
 		AmmoInClip--;
 
-		EffectRenderer.Set( "b_empty", AmmoInClip==0);
+		EffectRenderer.Set( "b_empty", AmmoInClip == 0 );
 		EffectRenderer.Set( "b_attack", true );
-		
+
 
 		return true;
 	}
@@ -134,14 +134,14 @@ public abstract class WeaponComponent : Component
 		return true;
 	}
 
-	
+
 	public virtual bool DoReload()
 	{
-		
+
 		var ammoToTake = ClipSize - AmmoInClip;
 		if ( ammoToTake <= 0 )
 			return false;
-		
+
 		var player = Components.GetInAncestors<PlayerController>();
 		if ( !player.IsValid() || IsReloading )
 			return false;
@@ -154,7 +154,7 @@ public abstract class WeaponComponent : Component
 		IsReloading = true;
 
 		SendReloadMessage();
-			
+
 		return true;
 	}
 
@@ -164,7 +164,7 @@ public abstract class WeaponComponent : Component
 			OnDeployed();
 		else
 			OnHolstered();
-		
+
 		base.OnStart();
 	}
 
@@ -179,9 +179,9 @@ public abstract class WeaponComponent : Component
 				animator.TriggerDeploy();
 			}
 		}
-		
+
 		ModelRenderer.Enabled = !HasViewModel;
-		
+
 		if ( DeploySound is not null )
 		{
 			Sound.Play( DeploySound, Transform.Position );
@@ -191,7 +191,7 @@ public abstract class WeaponComponent : Component
 		{
 			CreateViewModel();
 		}
-		
+
 		NextAttackTime = DeployTime;
 	}
 
@@ -205,7 +205,7 @@ public abstract class WeaponComponent : Component
 
 	protected override void OnAwake()
 	{
-		
+
 		ModelRenderer = Components.GetInDescendantsOrSelf<SkinnedModelRenderer>( true );
 		base.OnAwake();
 	}
@@ -214,7 +214,7 @@ public abstract class WeaponComponent : Component
 	{
 		if ( !IsProxy && ReloadFinishTime && IsReloading )
 		{
-			
+
 			var ammoToTake = ClipSize - AmmoInClip;
 			var player = Components.GetInAncestors<PlayerController>();
 			player.Ammo.CanTake( AmmoType, ammoToTake, out var taken );
@@ -236,10 +236,10 @@ public abstract class WeaponComponent : Component
 			OnHolstered();
 			IsDeployed = false;
 		}
-		
+
 		base.OnDestroy();
 	}
-	
+
 	private void DestroyViewModel()
 	{
 		ViewModel?.GameObject.Destroy();
@@ -252,16 +252,16 @@ public abstract class WeaponComponent : Component
 
 		if ( !ViewModelPrefab.IsValid() )
 			return;
-		
+
 		var player = Components.GetInAncestors<PlayerController>();
 
 		var viewModelGameObject = ViewModelPrefab.Clone();
 		viewModelGameObject.SetParent( player.ViewModelRoot, false );
-		
+
 		ViewModel = viewModelGameObject.Components.Get<ViewModel>();
 		ViewModel.SetWeaponComponent( this );
 		ViewModel.SetCamera( player.PlyCamera );
-		
+
 		ModelRenderer.Enabled = false;
 	}
 
@@ -270,9 +270,9 @@ public abstract class WeaponComponent : Component
 	{
 		if ( ReloadSoundSequence is null )
 			return;
-		
+
 		ReloadSound?.Stop();
-		
+
 		ReloadSound = new( ReloadSoundSequence );
 		ReloadSound.Start( Transform.Position );
 	}
@@ -317,7 +317,7 @@ public abstract class WeaponComponent : Component
 				p.PlayUntilFinished( Task );
 			}
 		}
-		
+
 		if ( MuzzleSmoke is not null )
 		{
 			var transform = EffectRenderer.SceneModel.GetAttachment( "muzzle" );

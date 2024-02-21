@@ -7,7 +7,7 @@ namespace GeneralGame;
 public sealed class SpawnPointStripper : Component, Component.ExecuteInEditor
 {
 	[Property] public MapInstance Map { get; set; }
-	
+
 	protected override void OnAwake()
 	{
 		Map.OnMapLoaded += StripSpawnPoints;
@@ -16,7 +16,7 @@ public sealed class SpawnPointStripper : Component, Component.ExecuteInEditor
 		{
 			StripSpawnPoints();
 		}
-		
+
 		base.OnAwake();
 	}
 
@@ -26,7 +26,7 @@ public sealed class SpawnPointStripper : Component, Component.ExecuteInEditor
 		{
 			Map.OnMapLoaded -= StripSpawnPoints;
 		}
-		
+
 		base.OnDestroy();
 	}
 

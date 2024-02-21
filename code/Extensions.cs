@@ -24,17 +24,17 @@ public static class Extensions
 
 		particles.Delete();
 	}
-	
+
 	public static void ApplyWithComponent( this ClothingContainer self, SkinnedModelRenderer body )
 	{
 		self.Reset( body );
-		
+
 		var skinMaterial = self.Clothing?.Select( x => x?.SkinMaterial ).Where( x => !string.IsNullOrWhiteSpace( x ) ).Select( Material.Load ).FirstOrDefault();
 		var eyesMaterial = self.Clothing?.Select( x => x?.EyesMaterial ).Where( x => !string.IsNullOrWhiteSpace( x ) ).Select( Material.Load ).FirstOrDefault();
 
 		if ( skinMaterial is not null ) body.SetMaterialOverride( skinMaterial, "skin" );
 		if ( eyesMaterial is not null ) body.SetMaterialOverride( eyesMaterial, "eyes" );
-		
+
 		foreach ( var c in self.Clothing )
 		{
 			var modelPath = c.GetModel( self.Clothing.Except( new[] { c } ) );
@@ -53,9 +53,9 @@ public static class Extensions
 
 			var component = go.Components.Create<ClothingComponent>();
 			component.Category = c.Category;
-			
+
 			go.Tags.Add( "clothing" );
-			
+
 			var r = go.Components.Create<SkinnedModelRenderer>();
 			r.Model = Model.Load( c.Model );
 			r.BoneMergeTarget = body;
@@ -65,10 +65,10 @@ public static class Extensions
 
 			if ( !string.IsNullOrEmpty( c.MaterialGroup ) )
 				r.MaterialGroup = c.MaterialGroup;
-			
+
 			go.Enabled = true;
 		}
-		
+
 		foreach ( var (name, value) in self.GetBodyGroups() )
 		{
 			body.SetBodyGroup( name, value );

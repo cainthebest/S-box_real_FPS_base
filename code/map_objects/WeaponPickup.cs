@@ -32,7 +32,7 @@ public class WeaponPickup : PickupComponent, IUse
 			{
 				player.Ammo.Give( templateComponent.AmmoType, ammoToGive );
 			}
-			
+
 			template.DestroyImmediate();
 		}
 		else

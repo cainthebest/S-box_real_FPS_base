@@ -9,7 +9,7 @@ namespace GeneralGame;
 public sealed class HealthEffects : Component
 {
 	[Property] public ColorAdjustments Adjustments { get; set; }
-	
+
 	private PlayerController LocalPlayer { get; set; }
 	private Vignette Vignette { get; set; }
 
@@ -37,7 +37,7 @@ public sealed class HealthEffects : Component
 
 		Adjustments.Saturation = 1f - (1f - health) * 0.3f;
 		Vignette.Intensity = 0.5f * (1f - health);
-		
+
 		base.OnFixedUpdate();
 	}
 }

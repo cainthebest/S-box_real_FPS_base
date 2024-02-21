@@ -23,42 +23,42 @@
 
 @code
 {
-	public record Entry( string author, string message, RealTimeSince timeSinceAdded );
-	
+	public record Entry(string author, string message, RealTimeSince timeSinceAdded);
+
 	private List<Entry> Entries { get; set; } = new();
 	private TextEntry InputBox { get; set; }
 
-	public void AddTextLocal( string author, string message )
+	public void AddTextLocal(string author, string message)
 	{
-		message = message.Truncate( 300 );
+		message = message.Truncate(300);
 
-		if ( string.IsNullOrWhiteSpace( message ) )
+		if (string.IsNullOrWhiteSpace(message))
 			return;
 
-		Log.Info( $"{author}: {message}" );
+		Log.Info($"{author}: {message}");
 
-		Entries.Add( new ( author, message, 0f ) );
+		Entries.Add(new(author, message, 0f));
 		StateHasChanged();
 	}
-	
+
 	protected override void OnUpdate()
 	{
-		if ( InputBox is null )
+		if (InputBox is null)
 			return;
 
 		Panel.AcceptsFocus = false;
 
-		if ( Input.Pressed( "chat" ) )
+		if (Input.Pressed("chat"))
 		{
 			InputBox.Focus();
 		}
 
-		if ( Entries.RemoveAll( x => x.timeSinceAdded > 30f ) > 0 )
+		if (Entries.RemoveAll(x => x.timeSinceAdded > 30f) > 0)
 		{
 			StateHasChanged();
 		}
 
-		SetClass( "open", InputBox.HasFocus );
+		SetClass("open", InputBox.HasFocus);
 	}
 
 	private void ChatFinished()
@@ -66,29 +66,29 @@
 		var text = InputBox.Text;
 		InputBox.Text = "";
 
-		if ( string.IsNullOrWhiteSpace( text ) )
+		if (string.IsNullOrWhiteSpace(text))
 			return;
 
-		SendText( Sandbox.Utility.Steam.PersonaName, text );
+		SendText(Sandbox.Utility.Steam.PersonaName, text);
 	}
 
 	[Broadcast]
-	private void SendText( string author, string message )
+	private void SendText(string author, string message)
 	{
-		AddTextLocal( author, message );
+		AddTextLocal(author, message);
 	}
 
-	void INetworkListener.OnConnected( Connection channel )
+	void INetworkListener.OnConnected(Connection channel)
 	{
-		if ( IsProxy ) return;
+		if (IsProxy) return;
 
-		SendText( "🛎️", $"{channel.DisplayName} has joined the game" );
+		SendText("🛎️", $"{channel.DisplayName} has joined the game");
 	}
 
-	void INetworkListener.OnDisconnected( Connection channel )
+	void INetworkListener.OnDisconnected(Connection channel)
 	{
-		if ( IsProxy ) return;
+		if (IsProxy) return;
 
-		SendText(  "💨", $"{channel.DisplayName} has left the game" );
+		SendText("💨", $"{channel.DisplayName} has left the game");
 	}
 }

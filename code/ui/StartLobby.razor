@@ -19,12 +19,12 @@
 					Simple multiplayer deathmatch game.
 				</p>
 			</div>
-			
+
 			<div class="button-list">
 				<div class="button" onclick=@( () => CreateServer() )>
 					Create Server
 				</div>
-				
+
 				<div class="button" onclick=@( () => Quit() )>
 					Quit
 				</div>
@@ -36,18 +36,18 @@
 				<div class="title">Servers</div>
 			</div>
 
-			@if ( IsRefreshing )
+			@if (IsRefreshing)
 			{
 				<label>Refreshing the server list, please wait...</label>
 			}
-			else if ( List.Count == 0 )
+			else if (List.Count == 0)
 			{
 				<label>No servers were found, create one to play.</label>
 			}
 			else
 			{
 				<div class="button-list">
-					@foreach ( var lobby in List )
+					@foreach (var lobby in List)
 					{
 						<div class="button" onclick=@( () => OpenLobby( lobby ) )>
 							<div class="title">
@@ -75,29 +75,29 @@
 {
 	private bool IsRefreshing { get; set; }
 	private List<LobbyInformation> List { get; set; } = new();
-	
+
 	protected override void OnFixedUpdate()
 	{
-		
+
 	}
-	
+
 	protected override void OnEnabled()
 	{
 		base.OnEnabled();
-		
+
 		_ = RefreshLobbyList();
 	}
 
 	protected override void OnUpdate()
 	{
-		
+
 	}
-	
-	protected override int BuildHash() => HashCode.Combine( RealTime.Now );
-	
+
+	protected override int BuildHash() => HashCode.Combine(RealTime.Now);
+
 	private async Task RefreshLobbyList()
 	{
-		while ( true )
+		while (true)
 		{
 			IsRefreshing = true;
 			StateHasChanged();
@@ -107,13 +107,13 @@
 			IsRefreshing = false;
 			StateHasChanged();
 
-			await Task.DelayRealtimeSeconds( 5f );
+			await Task.DelayRealtimeSeconds(5f);
 		}
 	}
 
-	private void OpenLobby( LobbyInformation lobby )
+	private void OpenLobby(LobbyInformation lobby)
 	{
-		GameNetworkSystem.Connect( lobby.LobbyId );
+		GameNetworkSystem.Connect(lobby.LobbyId);
 	}
 
 	private void CreateServer()

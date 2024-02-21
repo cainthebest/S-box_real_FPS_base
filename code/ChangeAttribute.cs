@@ -13,16 +13,16 @@ public class ChangeAttribute : Attribute
 	{
 		Callback = callbackName;
 	}
-	
+
 	internal static void OnPropertySet<T>( WrappedPropertySet<T> p )
 	{
 		var attribute = p.Attributes.OfType<ChangeAttribute>().FirstOrDefault();
 		var type = TypeLibrary.GetType( p.TypeName );
 		var method = type.GetMethod( attribute.Callback );
 		var property = TypeLibrary.GetMemberByIdent( p.MemberIdent ) as PropertyDescription;
-		
+
 		var oldValue = property.GetValue( p.Object );
-		
+
 		p.Setter( p.Value );
 
 		try

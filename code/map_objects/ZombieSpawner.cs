@@ -6,10 +6,10 @@ public sealed class ZombieSpawner : Component
 {
 
 	[Property] public GameObject ZombiePrefab { get; set; }
-	public float GetRandom() => Random.Shared.Float(1, 100);
+	public float GetRandom() => Random.Shared.Float( 1, 100 );
 	protected override void OnUpdate()
 	{
-		
+
 	}
 
 
@@ -29,7 +29,7 @@ public sealed class ZombieSpawner : Component
 
 	void SpawnZombie()
 	{
-		
+
 		var zombie = ZombiePrefab.Clone( this.Transform.World );
 		zombie.NetworkSpawn();
 	}
@@ -37,20 +37,20 @@ public sealed class ZombieSpawner : Component
 	TimeUntil nextSecond = 5f;
 	protected override void OnFixedUpdate()
 	{
-		if (nextSecond)
+		if ( nextSecond )
 		{
 			var random = GetRandom();
 			GetRandom();
 
-			if (random >= 60f)
+			if ( random >= 60f )
 			{
 				SpawnZombie();
 			}
 			nextSecond = 5;
 			//Log.Info(random);
 		}
-		
-		
+
+
 	}
 
 }

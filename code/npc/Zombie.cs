@@ -32,17 +32,17 @@ public sealed class Zombie : Component, IHealthComponent
 		animationHelper.HoldType = CitizenAnimationHelper.HoldTypes.Swing;
 		animationHelper.MoveStyle = CitizenAnimationHelper.MoveStyles.Run;
 		UpdateAnimtions();
-		if (Vector3.DistanceBetween(target, GameObject.Transform.Position ) < 150f)
+		if ( Vector3.DistanceBetween( target, GameObject.Transform.Position ) < 150f )
 		{
 			agent.Stop();
 
 		}
 		else
 		{
-			agent.MoveTo(playerController.Transform.Position);
+			agent.MoveTo( playerController.Transform.Position );
 		}
 
-		if (playerController.Transform.Position.z > GameObject.Transform.Position.z + 50)
+		if ( playerController.Transform.Position.z > GameObject.Transform.Position.z + 50 )
 		{
 			UpwardTrace();
 		}
@@ -53,44 +53,44 @@ public sealed class Zombie : Component, IHealthComponent
 
 
 	}
-	
+
 	protected override void OnFixedUpdate()
 	{
 
-		
+
 	}
 
 	void UpdateAnimtions()
 	{
 		var bodyRot = body.Transform.Rotation.Angles();
-		animationHelper.WithWishVelocity(agent.WishVelocity);
-		animationHelper.WithVelocity(agent.Velocity);
-		var targetRot = Rotation.LookAt(playerController.GameObject.Transform.Position.WithZ(Transform.Position.z) - body.Transform.Position);
-		body.Transform.Rotation = Rotation.Slerp(body.Transform.Rotation, targetRot, Time.Delta * 5.0f);
+		animationHelper.WithWishVelocity( agent.WishVelocity );
+		animationHelper.WithVelocity( agent.Velocity );
+		var targetRot = Rotation.LookAt( playerController.GameObject.Transform.Position.WithZ( Transform.Position.z ) - body.Transform.Position );
+		body.Transform.Rotation = Rotation.Slerp( body.Transform.Rotation, targetRot, Time.Delta * 5.0f );
 	}
 	void NormalTrace()
 	{
-		var tr = Scene.Trace.Ray(body.Transform.Position, body.Transform.Position + body.Transform.Rotation.Forward * 75).Run();
+		var tr = Scene.Trace.Ray( body.Transform.Position, body.Transform.Position + body.Transform.Rotation.Forward * 75 ).Run();
 
-		if (tr.Hit && tr.GameObject.Tags.Has("player") && timeSinceHit > 1.0f && GameObject is not null)
+		if ( tr.Hit && tr.GameObject.Tags.Has( "player" ) && timeSinceHit > 1.0f && GameObject is not null )
 		{
 			IHealthComponent damageable = null;
 			damageable = tr.Component.Components.GetInAncestorsOrSelf<IHealthComponent>();
 
 			damageable.TakeDamage( DamageType.Bullet, 15, tr.EndPosition, tr.Direction * 5, GameObject.Id );
 			//playerController.TakeDamage(25);
-			animationHelper.Target.Set("b_attack", true);
+			animationHelper.Target.Set( "b_attack", true );
 			timeSinceHit = 0;
-			Sound.Play(hitSound);
+			Sound.Play( hitSound );
 		}
 
 	}
 
 	void UpwardTrace()
 	{
-		var tr = Scene.Trace.Ray(eye.Transform.Position, eye.Transform.Position + eye.Transform.Rotation.Up * 50).Run();
+		var tr = Scene.Trace.Ray( eye.Transform.Position, eye.Transform.Position + eye.Transform.Rotation.Up * 50 ).Run();
 
-		if (tr.Hit && tr.GameObject.Tags.Has("player") && timeSinceHit > 1.0f && GameObject is not null)
+		if ( tr.Hit && tr.GameObject.Tags.Has( "player" ) && timeSinceHit > 1.0f && GameObject is not null )
 		{
 
 			IHealthComponent damageable = null;
@@ -98,9 +98,9 @@ public sealed class Zombie : Component, IHealthComponent
 
 			damageable.TakeDamage( DamageType.Bullet, 15, tr.EndPosition, tr.Direction * 5, GameObject.Id );
 			//playerController.TakeDamage(25);
-			animationHelper.Target.Set("b_attack", true);
+			animationHelper.Target.Set( "b_attack", true );
 			timeSinceHit = 0;
-			Sound.Play(hitSound);
+			Sound.Play( hitSound );
 		}
 
 	}

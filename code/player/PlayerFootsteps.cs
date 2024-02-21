@@ -9,7 +9,7 @@ public sealed class PlayerFootsteps : Component
 	[Property] private SkinnedModelRenderer ModelRenderer { get; set; }
 
 	private TimeSince TimeSinceLastStep { get; set; }
-	
+
 	protected override void OnEnabled()
 	{
 		if ( !ModelRenderer.IsValid() )
@@ -25,7 +25,7 @@ public sealed class PlayerFootsteps : Component
 
 		ModelRenderer.OnFootstepEvent -= OnEvent;
 	}
-	
+
 	private void OnEvent( SceneModel.FootstepEvent e )
 	{
 		if ( TimeSinceLastStep < 0.2f )

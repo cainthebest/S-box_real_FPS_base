@@ -10,9 +10,9 @@ public class SoundSequence
 	{
 		Data = data;
 	}
-	
+
 	public bool IsActive { get; private set; }
-	
+
 	private TimeUntil NextSoundTime { get; set; }
 	private int CurrentIndex { get; set; }
 	private SoundHandle Handle { get; set; }
@@ -24,7 +24,7 @@ public class SoundSequence
 			return;
 
 		Stop();
-		
+
 		CurrentIndex = 0;
 
 		var entry = Data.Entries[CurrentIndex];
@@ -43,17 +43,17 @@ public class SoundSequence
 
 		IsActive = false;
 	}
-	
+
 	public void Update( Vector3 position )
 	{
 		if ( !IsActive ) return;
-		
+
 		if ( Handle.IsValid() )
 		{
 			Handle.Position = position;
 			Handle.Update();
 		}
-		
+
 		if ( !NextSoundTime ) return;
 
 		Handle?.Stop();

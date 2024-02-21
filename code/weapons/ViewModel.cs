@@ -5,12 +5,12 @@ using System.Numerics;
 namespace GeneralGame;
 
 [Group( "Arena" )]
-[Title( "View Model")]
+[Title( "View Model" )]
 public sealed class ViewModel : Component
 {
 	[Property] public SkinnedModelRenderer ModelRenderer { get; set; }
 	[Property] public bool UseSprintAnimation { get; set; }
-	
+
 	private Rotation CurRotation { get; set; }
 	private Vector3 CurPos { get; set; }
 
@@ -33,7 +33,7 @@ public sealed class ViewModel : Component
 
 	public float YawInertia { get; private set; }
 	public float PitchInertia { get; private set; }
-	
+
 
 	private PlayerController PlayerController => Weapon.Components.GetInAncestors<PlayerController>();
 	private CameraComponent Camera { get; set; }
@@ -43,12 +43,12 @@ public sealed class ViewModel : Component
 	{
 		Weapon = weapon;
 	}
-	
+
 	public void SetCamera( CameraComponent camera )
 	{
 		Camera = camera;
 	}
-	
+
 	protected override void OnStart()
 	{
 
@@ -57,7 +57,7 @@ public sealed class ViewModel : Component
 
 		Transform.LocalPosition = Vector3.Zero;
 		Transform.LocalRotation = Rotation.Identity;
-		
+
 
 		if ( PlayerController.IsValid() )
 		{
@@ -75,7 +75,7 @@ public sealed class ViewModel : Component
 		{
 			PlayerController.OnJump -= OnPlayerJumped;
 		}
-		
+
 		base.OnDestroy();
 	}
 
@@ -94,12 +94,12 @@ public sealed class ViewModel : Component
 
 	protected override void OnUpdate()
 	{
-		
+
 		Vector3 plusPos = Vector3.Zero + Weapon.idlePos;
 
 
 		if ( PlayerController.IsAiming )
-		{ 
+		{
 			CurPos = CurPos.LerpTo( plusPos + Weapon.aimPos, Time.Delta * 10f );
 		}
 		else
@@ -107,12 +107,12 @@ public sealed class ViewModel : Component
 			CurPos = CurPos.LerpTo( plusPos, Time.Delta * 10f );
 		}
 		ModelRenderer.Set( "b_aiming", PlayerController.IsAiming );
-		
-		
+
+
 
 		Rotation plusRot = Camera.Transform.Rotation;
 
-		
+
 
 
 
@@ -133,7 +133,7 @@ public sealed class ViewModel : Component
 		//base.OnUpdate();
 	}
 
-	
+
 	private void CalcShakeMoves()
 	{
 		var newPitch = CurRotation.Pitch();
@@ -214,16 +214,16 @@ public sealed class ViewModel : Component
 
 	/*private void ApplyVelocity()
 	{*/
-		/*var moveVel = PlayerController.CharacterController.Velocity;
-		var moveLen = moveVel.Length;
+	/*var moveVel = PlayerController.CharacterController.Velocity;
+	var moveLen = moveVel.Length;
 
-		var wishLook = PlayerController.WishVelocity.Normal * 1f;
-		if ( PlayerController.IsAiming ) wishLook = 0;
+	var wishLook = PlayerController.WishVelocity.Normal * 1f;
+	if ( PlayerController.IsAiming ) wishLook = 0;
 
-		LerpedWishLook = LerpedWishLook.LerpTo( wishLook, Time.Delta * 5.0f );
+	LerpedWishLook = LerpedWishLook.LerpTo( wishLook, Time.Delta * 5.0f );
 
-		CurRotation *= Rotation.From( 0, -LerpedWishLook.y * 50f, 0 );*/
-		//LocalPosition += -LerpedWishLook;
+	CurRotation *= Rotation.From( 0, -LerpedWishLook.y * 50f, 0 );*/
+	//LocalPosition += -LerpedWishLook;
 
 	//}
 
